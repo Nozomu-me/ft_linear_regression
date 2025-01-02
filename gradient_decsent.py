@@ -41,7 +41,9 @@ def estimated_price(theta0, theta1, mileage):
 
 
 # Gradient Descent implementation
-def gradient_descent(mileage, price, learning_rate=0.01, iterations=10000):
+def gradient_descent(mileage, price):
+    learning_rate = 0.01
+    iterations = 10000
     mileage_standardized = standardize(mileage)  # standardize mileage
     price_standardized = standardize(price)  # standardize price
 
@@ -107,9 +109,7 @@ def main():
         print("data is invalid\n")
         sys.exit(1)
 
-    theta0, theta1 = gradient_descent(
-        mileage, price, learning_rate=0.01, iterations=10000
-    )
+    theta0, theta1 = gradient_descent(mileage, price)
 
     with open("thetas.json", "w") as f:
         json.dump({"theta0": theta0, "theta1": theta1}, f)
