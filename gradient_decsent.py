@@ -115,31 +115,27 @@ def main():
         json.dump({"theta0": theta0, "theta1": theta1}, f)
     f.close()
 
-    print(f"slope(theta0) = {theta0}\nintercept(theta1) = {theta1}\n")
+    print(f"intercept(theta0) = {theta0}\nslope(theta1) = {theta1}\n")
 
     if len(sys.argv) == 1:
         print("use -h or --help to see the other optional arguments\n")
-        sys.exit(1)
 
-    if len(sys.argv[1]) > 1 and sys.argv[1] == "--help" or sys.argv[1] == "-h":
+    elif len(sys.argv) > 1 and sys.argv[1] == "--help" or sys.argv[1] == "-h":
         print(
             """optional arguments:
                 -h, --help           show this help message and exit
-                -plt, --plot-data    show the mileage and price curve
-                -p, --prediction     show the predicted price and mileage curve"""
+                -plt, --plot-data    show the mileage and price data points distribution
+                -p, --prediction     show the predicted price and mileage line"""
         )
 
-    if len(sys.argv) > 1 and sys.argv[1] == "--plot-data" or sys.argv[1] == "-plt":
+    elif len(sys.argv) > 1 and sys.argv[1] == "--plot-data" or sys.argv[1] == "-plt":
         plot_data(mileage, price)
-        sys.exit(0)
 
-    if len(sys.argv) > 1 and sys.argv[1] == "-p" or sys.argv[1] == "--prediction":
+    elif len(sys.argv) > 1 and sys.argv[1] == "-p" or sys.argv[1] == "--prediction":
         plot_regression_line(mileage, price, theta0, theta1)
-        sys.exit(0)
 
     else:
         print("use -h or --help to see the other optional arguments\n")
-        sys.exit(1)
 
 
 if __name__ == "__main__":
