@@ -22,17 +22,14 @@ def standardize(data):
     return (data - np.mean(data)) / np.std(data)
 
 
-# Destandardize slope
-def destandardize_slope(theta1, mileage, price):
+# Revert slope
+def revert_slope(theta1, mileage, price):
     return theta1 * (np.std(price) / np.std(mileage))
 
 
-# Destandardize intercept
-def destandardize_intercept(theta0, theta1, mileage, price):
-    mileage_mean = np.mean(mileage)
-    price_mean = np.mean(price)
-    price_std = np.std(price)
-    return theta0 * price_std + price_mean - (theta1 * mileage_mean)
+# Revert intercept
+def revert_intercept(theta0, theta1, mileage, price):
+    return theta0 * np.std(price) + np.mean(price) - (theta1 * np.mean(mileage))
 
 
 # Estimate price
@@ -42,33 +39,30 @@ def estimated_price(theta0, theta1, mileage):
 
 # Gradient Descent implementation
 def gradient_descent(mileage, price):
-    learning_rate = 0.01
-    iterations = 10000
-    mileage_standardized = standardize(mileage)  # standardize mileage
-    price_standardized = standardize(price)  # standardize price
-
     # Initialize parameters
     tmp_theta0, tmp_theta1 = 0, 0
     data_length = len(mileage)
+    learning_rate = 0.01
+    iterations = 10000
+    
+    mileage_standardized = standardize(mileage)
+    price_standardized = standardize(price)
+
 
     # Gradient descent loop
     for i in range(iterations):
-        predicted_standardized_price = estimated_price(
+        predicted_price = estimated_price(
             tmp_theta0, tmp_theta1, mileage_standardized
         )
-        errors = predicted_standardized_price - price_standardized
-
-        # Compute gradients
-        gradient_theta0 = np.sum(errors) / data_length
-        gradient_theta1 = np.sum(errors * mileage_standardized) / data_length
 
         # Update parameters
-        tmp_theta0 -= learning_rate * gradient_theta0
-        tmp_theta1 -= learning_rate * gradient_theta1
+        tmp_theta0 = tmp_theta0 - learning_rate * (1 / data_length) * np.sum((predicted_price - price_standardized))
+        tmp_theta1 = tmp_theta1 - learning_rate * (1 / data_length) * np.sum((predicted_price - price_standardized) * mileage_standardized)
 
-    # Destandardize theta1 and theta0
-    theta1 = destandardize_slope(tmp_theta1, mileage, price)
-    theta0 = destandardize_intercept(tmp_theta0, theta1, mileage, price)
+
+    # revert theta1 and theta0
+    theta1 = revert_slope(tmp_theta1, mileage, price)
+    theta0 = revert_intercept(tmp_theta0, theta1, mileage, price)
 
     return theta0, theta1
 
